@@ -769,8 +769,8 @@
 <!-- HEADER -->
 <header>
   <div class="header-left">
-    <img src="https://www.getontime.no/images/icons/ontime-logo.png"
-         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23f0c040%22/><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2218%22 font-weight=%22bold%22 fill=%22black%22>OT</text></svg>'"
+    <img id="headerLogo"
+         src="https://www.getontime.no/images/icons/ontime-logo.png"
          style="width:38px;height:38px;object-fit:contain;" alt="OnTime" />
     <div>
       <div class="header-title" id="concertName">Lade...</div>
@@ -979,9 +979,10 @@
       });
     };
     const urls = [
-      `http://${host}/api/poll`,
+      `http://${host}/data/rundown`,
       `http://${host}/data/rundowns/current`,
-      `http://${host}/api/rundown`
+      `http://${host}/api/rundown`,
+      `http://${host}/api/poll`
     ];
     for (const url of urls) {
       try {
@@ -994,25 +995,32 @@
 
   async function fetchCustomFieldDefs() {
     customFieldDefs = {};
-    try {
-      const res = await fetch(`http://${host}/api/project`, { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        const fields = data.customFields || data.settings?.customFields || {};
-        Object.entries(fields).forEach(([id, f]) => {
-          customFieldDefs[id] = (f && (f.label || f.title)) || id;
-        });
-        return;
-      }
-    } catch {}
+    // Custom Fields kommen von /data/custom-fields
     try {
       const res = await fetch(`http://${host}/data/custom-fields`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
+        console.log('[CustomFields]', JSON.stringify(data));
         if (Array.isArray(data)) {
           data.forEach(f => { if (f.id) customFieldDefs[f.id] = f.label || f.id; });
         } else if (data && typeof data === 'object') {
           Object.entries(data).forEach(([id, f]) => {
+            customFieldDefs[id] = (f && (f.label || f.title || f.colour)) || id;
+          });
+        }
+        return;
+      }
+    } catch(e) { console.warn('[CustomFields]', e); }
+    // Fallback: aus /data/project
+    try {
+      const res = await fetch(`http://${host}/data/project`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        const fields = data.customFields || data.custom || {};
+        if (Array.isArray(fields)) {
+          fields.forEach(f => { if (f.id) customFieldDefs[f.id] = f.label || f.id; });
+        } else {
+          Object.entries(fields).forEach(([id, f]) => {
             customFieldDefs[id] = (f && (f.label || f.title)) || id;
           });
         }
@@ -1096,18 +1104,47 @@
         personMap[mapKey].categories.add(category);
       };
 
+      // Genre-Map: EventId → Genre-String
+      const genreMap = {};
+
       rundown.forEach(event => {
         if (!event || event.type === 'block') return;
         const custom = getEventCustom(event);
+
+        // Genre aus Custom Fields lesen (inkl. Tippfehler "Gernre")
+        let genre = '';
+        Object.entries(custom).forEach(([fieldKey, rawValue]) => {
+          const rawLabel = (customFieldDefs[fieldKey] || fieldKey).toLowerCase();
+          const fk = fieldKey.toLowerCase();
+          if (rawLabel.includes('genre') || rawLabel.includes('gernre') ||
+              fk.includes('genre') || fk.includes('gernre') ||
+              rawLabel.includes('stil') || rawLabel.includes('musikrichtung')) {
+            if (rawValue && String(rawValue).trim()) genre = String(rawValue).trim();
+          }
+        });
+        if (genre && event.title) genreMap[event.title.trim().toLowerCase()] = genre;
+
         Object.entries(custom).forEach(([fieldKey, rawValue]) => {
           if (rawValue == null || rawValue === '') return;
           const rawLabel = customFieldDefs[fieldKey] || fieldKey.replace(/_/g, ' ');
-          const roleLabel = normalizeRole(rawLabel); // z.B. "Kamera_Links" → "Kamera"
+          // Genre-Felder nicht als Personen-Rollen behandeln
+          const rl = rawLabel.toLowerCase();
+          const fk2 = fieldKey.toLowerCase();
+          if (rl.includes('genre') || rl.includes('gernre') || 
+              fk2.includes('genre') || fk2.includes('gernre') || 
+              rl.includes('stil')) return;
+          const roleLabel = normalizeRole(rawLabel);
           const category = categorizeField(fieldKey, rawLabel);
           splitNames(String(rawValue)).forEach(name => addPerson(name, roleLabel, category));
         });
+
         if (event.title && String(event.title).trim()) {
-          addPerson(String(event.title).trim(), 'Band', 'band');
+          const bandName = String(event.title).trim();
+          const bandGenre = genre || '';
+          addPerson(bandName, 'Band', 'band');
+          // Genre zum personMap hinzufügen
+          const mapKey = bandName.toLowerCase();
+          if (personMap[mapKey] && bandGenre) personMap[mapKey].genre = bandGenre;
         }
       });
 
@@ -1126,6 +1163,7 @@
             name: p.name,
             roles,
             role: roles.join(' · '),
+            genre: p.genre || '',
             categories,
             category: categories.includes('crew') ? 'crew' : categories.includes('band') ? 'band' : 'song',
             initials: p.initials
@@ -1312,6 +1350,12 @@
         if (tag === 'runtime-data') {
           if (payload.clock != null) updateClock(payload.clock);
           if (payload.eventNow !== undefined) updateCurrentEvent(payload.eventNow);
+          // Konzertname aus runtime-data
+          const n = payload.projectName || payload.project || '';
+          const el = document.getElementById('concertName');
+          if (n && n.trim() && el && el.textContent === 'Lade...') {
+            setConcertName(n.trim());
+          }
         }
       } catch(e) {}
     };
@@ -1349,19 +1393,21 @@
   async function publishToLowerThird(person) {
     const base = `http://${host}`;
 
-    // Schritt 1: Name → msg.secondary → f0 in lower-third
-    await fetch(`${base}/api/message/secondary/${encodeURIComponent(person.name)}`, { cache: 'no-store' });
+    // f1Text bestimmen: Band → Genre oder "Band", Crew → Rolle
+    let f1Text;
+    if (person.category === 'band') {
+      f1Text = person.genre && person.genre.trim() ? person.genre.trim() : 'Band';
+    } else {
+      f1Text = person.role || '';
+    }
 
-    // Schritt 2: Rolle → msg.timer.text → f1 in lower-third
-    // Wichtig: text= als Query-Parameter UND als separater Call
-    await fetch(`${base}/api/message/timer?text=${encodeURIComponent(person.role)}`, { cache: 'no-store' });
+    // Wir kodieren Name und Rolle/Genre BEIDE in die Secondary Message
+    // Format: "NAME||ROLLE" — lower-third.html trennt das wieder auf
+    const combined = person.name + '||' + f1Text;
+    await fetch(`${base}/api/message/secondary/${encodeURIComponent(combined)}`, { cache: 'no-store' });
 
-    // Schritt 3: secondary sichtbar machen
+    // Secondary sichtbar machen (KEIN Timer Message — der bleibt unberührt!)
     await fetch(`${base}/api/message/timer?secondarySource=secondary`, { cache: 'no-store' });
-
-    // Schritt 4: Kurz warten und nochmal die Rolle setzen (sicherstellen dass es ankommt)
-    await new Promise(r => setTimeout(r, 100));
-    await fetch(`${base}/api/message/timer?text=${encodeURIComponent(person.role)}`, { cache: 'no-store' });
   }
 
   // ── DATEN ÜBERMITTELN ──
@@ -1576,32 +1622,34 @@ f1 (Rolle): "${person.role}"`;
   // Konzertname von OnTime laden
   async function loadConcertName() {
     try {
-      const res = await fetch(`http://${host}/api/project`, { cache: 'no-store' });
-      if (!res.ok) return;
+      const res = await fetch('http://' + host + '/data/project', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
-      console.log('[ConcertName] API:', JSON.stringify(data));
-      // OnTime kann den Namen an verschiedenen Stellen haben
-      const name = data.title || data.name || data.projectName || 
-                   data.project?.title || data.project?.name || '';
-      if (name && name.trim()) {
-        document.getElementById('concertName').textContent = name.trim();
-        document.title = name.trim() + ' — Techniker';
-      } else {
-        // Fallback: aus dem Rundown-Titel lesen
-        const r2 = await fetch(`http://${host}/api/rundown`, { cache: 'no-store' });
-        const rundown = await r2.json();
-        const arr = Array.isArray(rundown) ? rundown : (rundown.data || []);
-        // Ersten Block oder ersten Event-Titel nehmen
-        const first = arr.find(e => e && e.title);
-        if (first) {
-          document.getElementById('concertName').textContent = first.title;
-          document.title = first.title + ' — Techniker';
+      // Name setzen
+      const name = data.title || data.description || data.name || '';
+      if (name && name.trim()) setConcertName(name.trim());
+      // Logo im Header setzen
+      const logoEl = document.getElementById('headerLogo');
+      if (logoEl) {
+        if (data.logo) {
+          logoEl.src = 'http://' + host + '/user/logo/' + data.logo;
+          logoEl.onerror = () => {
+            logoEl.src = 'https://www.getontime.no/images/icons/ontime-logo.png';
+            logoEl.onerror = null;
+          };
+        } else {
+          logoEl.src = 'https://www.getontime.no/images/icons/ontime-logo.png';
         }
       }
     } catch(e) {
-      console.warn('[ConcertName] Fehler:', e);
+      console.warn('[ConcertName]', e);
       document.getElementById('concertName').textContent = 'OnTime';
     }
+  }
+
+  function setConcertName(name) {
+    document.getElementById('concertName').textContent = name;
+    document.title = name + ' — Techniker';
   }
 
   // ── START ──
@@ -1609,13 +1657,13 @@ f1 (Rolle): "${person.role}"`;
   host = document.getElementById('serverInput').value || DEFAULT_HOST;
 
   // Konzertname sofort laden (noch vor Passwort-Eingabe)
-  fetch('http://' + host + '/api/project', { cache: 'no-store' })
+  fetch('http://' + host + '/data/project', { cache: 'no-store' })
     .then(r => r.json())
     .then(d => {
-      const n = d.title || d.name || d.projectName || '';
-      if (n) {
-        document.getElementById('concertName').textContent = n;
-        document.title = n + ' — Techniker';
+      const name = d.title || d.description || d.name || '';
+      if (name && name.trim()) {
+        document.getElementById('concertName').textContent = name.trim();
+        document.title = name.trim() + ' — Techniker';
       }
     }).catch(() => {});
 
