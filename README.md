@@ -10,7 +10,7 @@
 
   index.html  →  AppData\Roaming\ontime\external\mm\index.html
 
-  Schnell öffnen: Win+R → eingeben:
+  Schnell öffnen mit Win+R → eingeben:
     %APPDATA%\ontime\external\mm\
 
   Falls Ordner "mm" nicht existiert: neu erstellen!
@@ -35,58 +35,36 @@
 
 
 ════════════════════════════════════════════════════════════
-  SCHRITT 3 — CUSTOM FIELDS IN ONTIME EINRICHTEN
+  SCHRITT 3 — CUSTOM FIELDS IN ONTIME
 ════════════════════════════════════════════════════════════
 
   Settings → Project settings → Custom fields
 
-  Folgende Felder werden empfohlen:
-
-  GENRE
-  ─────
-  Feldname: Gernre   (ACHTUNG: Tippfehler — so lassen!)
-  Inhalt:   Musikgenre der Band, z.B. Rock, Pop, Tanz, HipHop
-  Hinweis:  Erscheint als zweite Zeile im Lower Third (f1)
+  GENRE (wichtig für Bands!)
+  ──────────────────────────
+  Feldname: Gernre   ← TIPPFEHLER absichtlich so lassen!
+  Inhalt:   Rock, Pop, Tanz, HipHop, etc.
+  → Erscheint als zweite Zeile im Lower Third
 
   CREW
   ────
-  Stagemanager     → Name des Stagemanagers
-  Licht            → Lichttechniker
-  Schnitt          → Schnitttechniker
-  Ton_FOH          → Tontechniker
-  Kamera_Links     → Kamera Links
-  Kamera_Rechts    → Kamera Rechts
-  Kamera_Hinten    → Kamera Hinten
-  Produzent        → Produzent
-  Streamton        → Streamton-Techniker
+  Stagemanager     Licht            Schnitt
+  Ton_FOH          Ton_stream       Kamera_Links
+  Kamera_Rechts    Kamera_Hinten    Produzent
 
-  BAND-INSTRUMENTE
-  ────────────────
-  Gesang           → Sänger / Sängerin
-  Begleitgesang    → Backing Vocals
-  Gitarre          → Gitarrist
-  Akustikgitarre   → Akustikgitarrist
-  Bass             → Bassist
-  Schlagzeug       → Schlagzeuger
-  Percussion       → Percussionist
-  Keyboard         → Keyboarder
-  Piano / Klavier  → Pianist
-  Violine / Geige  → Geiger
-  Mandoline        → Mandolinenspieler
-  Ukulele          → Ukulelenspieler
-  Saxophon         → Saxophonist
-  Trompete         → Trompeter
-  Dudelsack        → Dudelsackspieler
-  Mundharmonika    → Mundharmonikaspieler
-  Floete           → Flötist
-  Querfloete       → Querflötist
+  INSTRUMENTE (Band-Mitglieder)
+  ──────────────────────────────
+  Gesang           Begleitgesang    Gitarre
+  Akustikgitarre   Bass             Schlagzeug
+  Percussion       Keyboard         Piano / Klavier
+  Violine / Geige  Mandoline        Ukulele
+  Saxophon         Trompete         Dudelsack
+  Mundharmonika    Floete           Querfloete
 
   VEREIN
   ──────
-  Vereinsmitglied    → Name des Vereinsmitglieds
-                       erscheint in der Liste mit Rolle "Vereinsmitglied"
-  Vorstandsmitglied  → Name des Vorstandsmitglieds
-                       erscheint in der Liste mit Rolle "Vorstandsmitglied"
+  Vereinsmitglied    → erscheint mit Rolle "Vereinsmitglied"
+  Vorstandsmitglied  → erscheint mit Rolle "Vorstandsmitglied"
 
 
 ════════════════════════════════════════════════════════════
@@ -95,14 +73,14 @@
 
   1. CasparCG Server starten
   2. CasparCG Client öffnen
-  3. Links in der Library: "LOWER THRID" auswählen
+  3. Library links: "LOWER THRID" auswählen
   4. Inspector rechts:
        Server:      Localhost
        Channel:     1
        Video layer: 20
 
-  Falls "LOWER THRID" nicht erscheint:
-  → CasparCG Server + Client neu starten
+  Falls "LOWER THRID" nicht in der Library erscheint:
+  → CasparCG Server + Client komplett neu starten
 
 
 ════════════════════════════════════════════════════════════
@@ -111,36 +89,62 @@
 
   1. OnTime starten
 
-  2. Browser öffnen:
+  2. Browser öffnen (PC oder Handy im gleichen WLAN!):
        http://localhost:4001/external/mm/
-     (oder mit IP: http://192.168.188.187:4001/external/mm/)
+     oder mit IP:
+       http://192.168.188.187:4001/external/mm/
 
-  3. Passwort eingeben: 1989
+  3. Passwort: 1989
 
   4. Person in der Liste auswählen
 
   5. "DATEN ÜBERMITTELN" klicken
 
-  6. In CasparCG: LOWER THRID → Play drücken
-     → Name + Genre/Rolle erscheint auf dem Screen!
+  6. CasparCG: LOWER THRID → Play
+     → Name + Genre/Rolle erscheint auf dem Bildschirm!
 
-  7. Zum Ausblenden: Stop drücken
+  7. Ausblenden: Stop
 
   !! WICHTIG: Erst senden, DANN Play drücken !!
+
+
+════════════════════════════════════════════════════════════
+  HANDY-NUTZUNG
+════════════════════════════════════════════════════════════
+
+  Die Seite funktioniert auch auf dem Handy!
+
+  Voraussetzung: Handy und OnTime-PC im gleichen WLAN
+
+  URL im Handy-Browser eingeben:
+    http://192.168.188.187:4001/external/mm/
+    (IP anpassen falls nötig — steht unten rechts auf der Seite)
+
+  Passwort: 1989
+
+  Dann genauso bedienen wie auf dem PC.
+  Auf dem Handy erscheint die Liste oben, die Auswahl unten.
 
 
 ════════════════════════════════════════════════════════════
   FILTER IN DER LISTE
 ════════════════════════════════════════════════════════════
 
-  ALLE         → Alle Personen anzeigen
-  BAND         → Nur Bandnamen (Event-Titel aus OnTime)
-  CREW         → Nur Technik-Personal
-  STAGEMANAGER, KAMERA, TON, LICHT, SCHNITT, PRODUKTION
-               → Direkte Rollenfilter
+  ALLE             → Alle Personen
+  BAND             → Nur Bandnamen (Event-Titel)
+  CREW             → Nur Technik-Personal
+  STAGEMANAGER     → Nur Stagemanager
+  KAMERA           → Alle Kamera-Rollen
+  TON STREAM       → Streamton-Techniker
+  TON FOH          → FOH-Tontechniker
+  LICHT            → Lichttechniker
+  SCHNITT          → Schnitttechniker
+  PRODUKTION       → Produzenten
+  VEREINSMITGLIED  → Vereinsmitglieder
+  VORSTANDSMITGLIED→ Vorstandsmitglieder
 
   ▼ Alle Rollen → Weitere Rollen ausklappen
-    (Instrumente, Vereinsmitglied, Vorstandsmitglied...)
+    (Instrumente, etc.)
 
 
 ════════════════════════════════════════════════════════════
@@ -151,33 +155,36 @@
   f1 (unten, klein) = Genre oder Rolle
 
   Beispiele:
-    HIPHOP GIRLS RECKLINGHAUSEN / Tanz
-    JULIAN / Stagemanager
-    ABANDONED HEAVEN / Rock
-    SINA / Kamera
-    MAX MUSTERMANN / Vereinsmitglied
+    HIPHOP GIRLS RECKLINGHAUSEN  /  Tanz
+    JULIAN                       /  Stagemanager
+    ABANDONED HEAVEN             /  Rock
+    SINA                         /  Kamera
+    MAX MUSTERMANN               /  Vereinsmitglied
 
-  Band ohne Genre eingetragen → zeigt "Band"
-  Crew-Mitglied → zeigt die Rolle
+  Band ohne Genre → zeigt "Band"
+  Crew            → zeigt die Rolle
+
+
+════════════════════════════════════════════════════════════
+  IP-ADRESSE ÄNDERN (neuer PC oder neues Netz)
+════════════════════════════════════════════════════════════
+
+  Seite öffnen → unten rechts: IP-Feld
+  Neue IP eingeben → Enter oder ↺ klicken
+  Wird automatisch gespeichert (auch nach F5)
+
+  OnTime-PC-IP herausfinden:
+  → Windows: cmd → ipconfig → "IPv4-Adresse"
 
 
 ════════════════════════════════════════════════════════════
   PASSWORT ÄNDERN
 ════════════════════════════════════════════════════════════
 
-  In: AppData\Roaming\ontime\external\mm\index.html
+  Datei: AppData\Roaming\ontime\external\mm\index.html
 
-  Zeile suchen:   const PW = '1989';
-  Ersetzen mit:   const PW = 'neuesPasswort';
-
-
-════════════════════════════════════════════════════════════
-  IP-ADRESSE ÄNDERN (neuer PC)
-════════════════════════════════════════════════════════════
-
-  Seite öffnen → unten rechts im Server-Feld
-  neue IP eingeben → Enter oder ↺ Verbinden drücken
-  IP wird automatisch gespeichert (bleibt auch nach F5)
+  Suchen:   const PW = '1989';
+  Ändern:   const PW = 'neuesPasswort';
 
 
 ════════════════════════════════════════════════════════════
@@ -186,19 +193,20 @@
 
   Seite lädt nicht
   → OnTime gestartet? IP korrekt?
+  → Handy: im gleichen WLAN wie der OnTime-PC?
 
-  Passwort falsch
-  → Passwort ist: 1989
+  Passwort funktioniert nicht
+  → Passwort ist: 1989 — F5 und nochmal
 
-  Konzertname zeigt "Lade..."
+  Konzertname zeigt "Lade..." oder "OnTime"
   → OnTime → Settings → Project data → Project title prüfen
 
   Lower Third zeigt "Bandname / Genre"
-  → Erst senden, DANN Play in Caspar!
+  → Reihenfolge: ERST senden → DANN Play in Caspar!
 
   Genre wird nicht angezeigt
-  → Feld heißt "Gernre" (Tippfehler in OnTime) — so lassen!
-  → Kein Genre eingetragen → zeigt automatisch "Band"
+  → Feldname in OnTime muss "Gernre" heißen (Tippfehler!)
+  → Kein Genre → zeigt automatisch "Band"
 
   OFFLINE-Screen erscheint
   → OnTime starten, dann F5
@@ -206,18 +214,24 @@
   Caspar zeigt Template nicht
   → CasparCG Server + Client neu starten
 
-  Beim Band-Filter erscheinen Bandmitglieder
-  → In index.html prüfen ob diese Zeile vorhanden ist:
+  Beim Band-Filter kommen Bandmitglieder
+  → In index.html prüfen:
      if (activeRoleFilter === 'band') return t.isBandTitle === true;
 
 
 ════════════════════════════════════════════════════════════
-  DATEI-ÜBERSICHT
+  DATEI-ÜBERSICHT (Setup-Ordner)
 ════════════════════════════════════════════════════════════
 
-  mm\index.html                    → Browser (OnTime-Seite)
-  template\Lower thrid.html        → CasparCG Template
-  template\scripts\gsap.min.js     → Animation
-  template\media\*.ttf / *.svg     → Schrift + Grafik
+  mm\
+    index.html                   → Browser / Handy (OnTime-Seite)
+
+  template\
+    Lower thrid.html             → CasparCG Template
+    scripts\gsap.min.js          → Animation
+    media\*.ttf                  → Schrift
+    media\*.svg                  → Logo / Grafik
+
+  ANLEITUNG.txt                  → diese Datei
 
 ════════════════════════════════════════════════════════════
