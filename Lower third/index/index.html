@@ -3,12 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Schichtplan for ontime">
+    <meta name="description" content="Lower Thirds for ontime">
     <meta name="author" content="Julian Engelkamp & Jan Rockahr">
     <meta name="dcterms.rightsHolder" content="Red-Uhu Broadcast">
-  <title>OnTime — Techniker</title>
+  <title>OnTime — Lower Thirds</title>
+
 
   <style>
+
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      main {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 73px);
+      }
+    .tech-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    height: 60vh;
+      }
+  .action-panel { padding: 16px; gap: 16px; }
+  .selection-summary { min-height: 120px; }
+  .selected-name { font-size: 28px; }
+  header { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+  .header-title { font-size: 16px; }
+  .search-bar { padding: 8px 16px; }
+  .panel-header { padding: 12px 16px 10px; }
+  .filter-bar { padding: 8px 12px; }
+  .tech-list { padding: 8px 12px; }
+  .tech-card { padding: 12px; }
+  .send-btn { padding: 16px; font-size: 16px; }
+  .credits-bar {
+    flex-direction: column; gap: 2px;
+    padding: 4px 12px; font-size: 10px; text-align: center;
+  }
+  body { padding-bottom: 48px; }
+    }
+
+
     :root {
       --bg: #0d0e11;
       --surface: #14161b;
@@ -45,7 +79,7 @@
 
     .pw-title {
       font-size: 13px;
-      letter-spacing: 5px;
+      letter-spacing: 3px;
       text-transform: uppercase;
       color: #555;
       font-weight: 400;
@@ -78,16 +112,36 @@
       animation: shake 0.4s ease;
       border-color: #ff4f4f;
     }
-    @keyframes shake {
+
+    .pw-input {
+  border-radius: 500px;  /* ← ändern — steht schon drin als 0 */
+
+    }  
+    @keyfram  s shake {
       0%,100%{transform:translateX(0)}
       20%{transform:translateX(-8px)}
       40%{transform:translateX(8px)}
       60%{transform:translateX(-6px)}
       80%{transform:translateX(6px)}
     }
+    
+    .pw-gesperrt {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #ff4f4f;
+    }
+    
+    .pw-jj {
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 2px;
+    }
+
 
     .pw-hint {
-      font-size: 12px;
+      font-size: 15px;
       color: #ff4f4f;
       height: 16px;
       letter-spacing: 1px;
@@ -108,6 +162,11 @@
       font-family: 'Segoe UI', Arial, sans-serif;
     }
     .pw-btn:hover { background: #ffd060; }
+
+    .pw-btn {
+    border-radius: 8px; 
+    }
+
 
     body {
       background: var(--bg);
@@ -366,6 +425,11 @@
       overflow: hidden;
     }
 
+    .tech-card {
+    border-radius: 10px;  /* ← hinzufügen */
+
+    }
+
     .tech-card::before {
       content: '';
       position: absolute;
@@ -410,6 +474,8 @@
       letter-spacing: 0;
     }
 
+
+   
     .tech-card.selected .tech-avatar {
       background: var(--accent);
       color: #000;
@@ -436,6 +502,11 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       opacity: 0.85;
+    }
+
+     .tech-check {
+    border-radius: 20px; 
+
     }
 
     .tech-check {
@@ -521,7 +592,7 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       margin-bottom: 14px;
     }
-
+   
     .selected-name {
       font-size: 38px;
       font-weight: 900;
@@ -544,6 +615,10 @@
       letter-spacing: 2px;
     }
 
+    .selected-role-badge {
+    border-radius: 50px;  /* ← hinzufügen */
+
+    }
     .no-selection-text {
       font-family: 'Segoe UI', Arial, sans-serif;
       font-size: 12px;
@@ -561,7 +636,7 @@
     .event-box .summary-label {
       margin-bottom: 10px;
     }
-
+    
     .event-title {
       font-size: 16px;
       font-weight: 700;
@@ -586,7 +661,6 @@
 
     /* ── SEND BUTTON ── */
     .send-btn {
-      margin-top: auto;
       background: var(--accent);
       color: #000;
       border: none;
@@ -604,7 +678,12 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-    }
+      }
+
+      .send-btn {
+      border-radius: 8px; 
+      }
+    
 
     .send-btn:hover:not(:disabled) {
       background: #ffd060;
@@ -694,6 +773,28 @@
     .offline-table-scroll::-webkit-scrollbar { width: 3px; }
     .offline-table-scroll::-webkit-scrollbar-thumb { background: var(--border); }
 
+    /* ── CREDITS ── */
+    .credits-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #0a0b0e;
+      border-top: 1px solid var(--border);
+      padding: 6px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #444;
+      letter-spacing: 1px;
+      z-index: 200;
+    }
+    .credits-bar a { color: #555; text-decoration: none; }
+    .credits-bar a:hover { color: var(--accent); }
+    .credits-right { display: flex; gap: 20px; align-items: center; color: #444; }
+
+    /* Abstand damit Inhalt nicht hinter Credits verschwindet */
+    body { padding-bottom: 32px; }
+
     /* ── TOAST ── */
     .toast {
       position: fixed;
@@ -712,6 +813,7 @@
       transition: all 0.3s ease;
     }
 
+  
     .toast.show {
       transform: translateY(0);
       opacity: 1;
@@ -774,7 +876,7 @@
          style="width:38px;height:38px;object-fit:contain;" alt="OnTime" />
     <div>
       <div class="header-title" id="concertName">Lade...</div>
-      <div class="header-sub">Techniker-Auswahl</div>
+      <div class="header-sub">Lower Thirds - Auswahl</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:20px;">
@@ -788,22 +890,22 @@
 
 <!-- PASSWORT SCREEN -->
 <div id="pwScreen">
-  <img class="pw-logo"
-    src="https://www.getontime.no/images/icons/ontime-logo.png"
-    onerror="this.style.display='none'" alt="OnTime" />
-  <div class="pw-title">Techniker-Zugang</div>
+  <div title="pw-gesperrt" class="pw-gesperrt">GESPERRT!</div>
+  <div class="pw-titel" >Bitte gebe sie das Passwort ein</div>
   <div class="pw-box">
     <input class="pw-input" id="pwInput" type="password"
-      maxlength="20" placeholder="••••"
+      maxlength="20" placeholder="••••••"
       onkeydown="if(event.key==='Enter')checkPW()" />
     <div class="pw-hint" id="pwHint"></div>
+    <div class="pw-hint" >Administrator Zugang</div>
     <button class="pw-btn" onclick="checkPW()">Entsperren</button>
   </div>
+  <div class="pw-jj">Administratoren sind Julian und Jan</div>
 </div>
 
 <!-- OFFLINE BANNER -->
 <div class="offline-banner" id="offlineBanner">
-  ⚠ OnTime nicht erreichbar — Offline-Ansicht (letzte bekannte Daten)
+  ⚠ OnTime nicht erreichbar
 </div>
 
 <!-- MAIN -->
@@ -845,14 +947,11 @@
   <!-- RECHTES PANEL: Aktion -->
   <section class="action-panel">
 
-    <!-- Server Config -->
-    <div>
-      <div class="summary-label">Server-Adresse</div>
-      <div class="config-row">
-        <input class="config-input" id="serverInput" type="text" value="192.168.188.187:4001" placeholder="IP:Port" />
-        <button class="config-btn" onclick="reconnect()">↺ Verbinden</button>
-      </div>
-    </div>
+    <!-- SENDEN — ganz oben -->
+    <button class="send-btn" id="sendBtn" onclick="sendData()" disabled>
+      <span>⬆</span>
+      <span id="sendLabel">Daten Übermitteln</span>
+    </button>
 
     <div class="divider"></div>
 
@@ -860,7 +959,7 @@
     <div class="selection-summary">
       <div class="summary-label">Ausgewählt</div>
       <div id="selectionDisplay">
-        <p class="no-selection-text">Keinen Techniker gewählt</p>
+        <p class="no-selection-text">Keinen Person gewählt</p>
       </div>
     </div>
 
@@ -872,17 +971,20 @@
       </div>
     </div>
 
-    <!-- STORAGE VORSCHAU: was lower-third.html bekommt -->
+    <!-- Zuletzt gesendet -->
     <div class="event-box">
       <div class="summary-label">→ Zuletzt gesendet an Lower Third</div>
       <pre id="storagePreview" style="font-family:'Courier New',monospace;font-size:11px;color:var(--muted);background:var(--surface2);padding:8px;border:1px solid var(--border);line-height:1.6;margin:0;">Noch keine Daten gesendet</pre>
     </div>
 
-    <!-- SENDEN -->
-    <button class="send-btn" id="sendBtn" onclick="sendData()" disabled>
-      <span>⬆</span>
-      <span id="sendLabel">Daten Übermitteln</span>
-    </button>
+    <!-- Server Config -->
+    <div style="margin-top:auto;">
+      <div class="summary-label">Server-Adresse</div>
+      <div class="config-row">
+        <input class="config-input" id="serverInput" type="text" value="" placeholder="192.168.188.187:4001" onkeydown="if(event.key==='Enter')reconnect()" />
+        <button class="config-btn" onclick="reconnect()">↺ Verbinden</button>
+      </div>
+    </div>
 
   </section>
 </main>
@@ -892,7 +994,8 @@
 
 <script>
   // ── CONFIG ──
-  const DEFAULT_HOST = '192.168.188.187:4001';
+  const FALLBACK_HOST = '192.168.188.187:4001';
+  const DEFAULT_HOST = localStorage.getItem('ontime_host') || FALLBACK_HOST;
   const LOWER_THIRD_STORAGE_KEY = 'ontime.lowerThird';
   let host = DEFAULT_HOST;
   let ws = null;
@@ -905,7 +1008,11 @@
 
   // ── INIT ──
   function init() {
-    host = document.getElementById('serverInput').value || DEFAULT_HOST;
+    // IP aus localStorage laden und Feld befüllen
+    const savedHost = localStorage.getItem('ontime_host') || DEFAULT_HOST;
+    document.getElementById('serverInput').value = savedHost;
+    host = savedHost;
+    localStorage.setItem('ontime_host', savedHost);
     document.getElementById('searchInput').addEventListener('input', filterTech);
     document.getElementById('filterBar').addEventListener('click', e => {
       const chip = e.target.closest('.filter-chip');
@@ -929,10 +1036,15 @@
    
 
   function reconnect() {
-    host = document.getElementById('serverInput').value || DEFAULT_HOST;
+    const newHost = document.getElementById('serverInput').value.trim() || FALLBACK_HOST;
+    host = newHost;
+    localStorage.setItem('ontime_host', newHost);
+    const ipEl = document.getElementById('creditsIp');
+    if (ipEl) ipEl.textContent = newHost.split(':')[0];
     if (ws) { ws.close(); ws = null; }
     if (pollingInterval) clearInterval(pollingInterval);
     setStatus(false, 'Verbinde...');
+    loadConcertName();
     loadTechnicians();
     connectWebSocket();
     startPolling();
@@ -1037,7 +1149,8 @@
   function normalizeRole(roleLabel) {
     const s = roleLabel.toLowerCase();
     if (s.includes('kamera') || s.includes('camera') || s.includes('cam')) return 'Kamera';
-    if (s.includes('ton') || s.includes('sound') || s.includes('audio')) return 'Ton';
+    if (s.includes('ton_foh') || s.includes('ton foh')) return 'Ton FOH';
+    if (s.includes('ton_stream') || s.includes('streamton') || s.includes('ton stream')) return 'Ton Stream';
     if (s.includes('licht') || s.includes('light')) return 'Licht';
     if (s.includes('schnitt') || s.includes('edit')) return 'Schnitt';
     if (s.includes('stream')) return 'Stream';
@@ -1063,6 +1176,7 @@
     if (s.includes('kamera') || s.includes('camera') || s.includes('cam') ||
         s.includes('ton') || s.includes('licht') || s.includes('schnitt') ||
         s.includes('stream') || s.includes('stage') || s.includes('manager') ||
+        s.includes('vereinsmitglied') || s.includes('vorstandsmitglied') ||
         s.includes('produzent') || s.includes('regie') || s.includes('technik')) return 'crew';
     return 'band';
   }
@@ -1107,8 +1221,14 @@
       // Genre-Map: EventId → Genre-String
       const genreMap = {};
 
-      rundown.forEach(event => {
+      // Events die NICHT angezeigt werden sollen
+      const SKIP_EVENTS = ['changeover', 'abspann', 'pre stream', 'uhrzeit', 'umbaupause', 'aufbau', 'abbau', 'pause', 'break'];
+
+            rundown.forEach(event => { 
         if (!event || event.type === 'block') return;
+      const titleLower = (event.title || '').toLowerCase().trim();
+        if (SKIP_EVENTS.some(skip => titleLower.includes(skip))) return;
+
         const custom = getEventCustom(event);
 
         // Genre aus Custom Fields lesen (inkl. Tippfehler "Gernre")
@@ -1144,7 +1264,10 @@
           addPerson(bandName, 'Band', 'band');
           // Genre zum personMap hinzufügen
           const mapKey = bandName.toLowerCase();
-          if (personMap[mapKey] && bandGenre) personMap[mapKey].genre = bandGenre;
+          if (personMap[mapKey]) {
+          if (bandGenre) personMap[mapKey].genre = bandGenre;
+            personMap[mapKey].isBandTitle = true;
+          }   
         }
       });
 
@@ -1166,6 +1289,7 @@
             genre: p.genre || '',
             categories,
             category: categories.includes('crew') ? 'crew' : categories.includes('band') ? 'band' : 'song',
+            isBandTitle: p.isBandTitle || false,
             initials: p.initials
           };
         })
@@ -1177,6 +1301,7 @@
       filterTech();
       document.getElementById('techCount').textContent = allTechnicians.length + ' Personen';
       lastKnownPersons = [...allTechnicians];  // Offline-Backup
+      updateCredits(true);
       setLoading(false);
 
     } catch (err) {
@@ -1193,7 +1318,7 @@
     const allRoles = [...new Set(allTechnicians.flatMap(t => t.roles))].sort((a, b) => a.localeCompare(b, 'de'));
 
     // Favoriten = immer sichtbar oben
-    const favoriten = ['Alle', 'Band', 'Crew', 'Stagemanager', 'Kamera', 'Ton', 'Licht', 'Schnitt', 'Produktion'];
+    const favoriten = ['Alle', 'Band', 'Crew', 'Stagemanager', 'Kamera', 'Ton Stream', 'Ton Foh', 'Licht', 'Schnitt', 'Produktion', 'Vereinsmitglied', 'Vorstandsmitglied'];
     const favChips = [
       { id: 'all', label: 'Alle' },
       { id: 'band', label: 'Band' },
@@ -1284,7 +1409,7 @@
   function matchesRoleFilter(t) {
     if (activeRoleFilter === 'all') return true;
     if (activeRoleFilter === 'crew') return t.categories.includes('crew');
-    if (activeRoleFilter === 'band') return t.categories.includes('band');
+    if (activeRoleFilter === 'band') return t.isBandTitle === true;
     return t.roles.some(r => r.toLowerCase() === activeRoleFilter.toLowerCase());
   }
 
@@ -1312,7 +1437,7 @@
   function updateSelectionDisplay() {
     const div = document.getElementById('selectionDisplay');
     if (!selectedTech) {
-      div.innerHTML = `<p class="no-selection-text">Keinen Techniker gewählt</p>`;
+      div.innerHTML = `<p class="no-selection-text">Keinen Person gewählt</p>`;
     } else {
       div.innerHTML = `
         <div class="selected-name">${escHtml(selectedTech.name)}</div>
@@ -1465,6 +1590,7 @@ f1 (Rolle): "${person.role}"`;
     document.getElementById('statusDot').className = 'status-dot' + (ok ? ' connected' : '');
     document.getElementById('statusText').textContent = text;
 
+    updateCredits(true);
     if (ok !== isOnline) {
       isOnline = ok;
       const mainEl = document.querySelector('main');
@@ -1590,7 +1716,7 @@ f1 (Rolle): "${person.role}"`;
         if (footerDesc) footerDesc.innerText = desc ? ` ${desc}` : '';
         if (footerAuthor) footerAuthor.innerText = author ? `by ${author}` : '';
         if (footerRights) footerRights.innerText = rights ? `© ${rights}` : '';
-        if (footerEvents) footerEvents.innerText = `Events: ${state.eventList.length}`;
+        if (footerEvents) footerEvents.innerText = `Events: ${state.eventList.length} ${state.eventList.length === 0 ? '' : 'e'}!`;
       }
 
   // ── PASSWORT ──
@@ -1649,7 +1775,17 @@ f1 (Rolle): "${person.role}"`;
 
   function setConcertName(name) {
     document.getElementById('concertName').textContent = name;
-    document.title = name + ' — Techniker';
+    document.title = 'Lower Thirds'+' — ' + name;
+  }
+
+  // ── CREDITS ──
+  function updateCredits() {
+    const evEl = document.getElementById('creditsEvents');
+    const stEl = document.getElementById('creditsStatus');
+    const ipEl = document.getElementById('creditsIp');
+    if (evEl) evEl.textContent = 'Es sind ' + (allTechnicians.length > 0 ? allTechnicians.length + ' Personen Verfügbar' : '—');
+    if (stEl) stEl.textContent = isOnline ? 'Status: Verbunden' : 'Status: Offline';
+    if (ipEl) ipEl.textContent = host ? host.split(':')[0] : '—';
   }
 
   // ── START ──
@@ -1657,13 +1793,13 @@ f1 (Rolle): "${person.role}"`;
   host = document.getElementById('serverInput').value || DEFAULT_HOST;
 
   // Konzertname sofort laden (noch vor Passwort-Eingabe)
-  fetch('http://' + host + '/data/project', { cache: 'no-store' })
+  fetch('http://' + DEFAULT_HOST + '/data/project', { cache: 'no-store' })
     .then(r => r.json())
     .then(d => {
       const name = d.title || d.description || d.name || '';
       if (name && name.trim()) {
         document.getElementById('concertName').textContent = name.trim();
-        document.title = name.trim() + ' — Techniker';
+        document.title = 'Lower Thirds'+' — ' + name.trim();
       }
     }).catch(() => {});
 
@@ -1671,5 +1807,15 @@ f1 (Rolle): "${person.role}"`;
   document.getElementById('pwInput').focus();
   
 </script>       
+<!-- CREDITS -->
+<div class="credits-bar">
+  <div>lower thirds &nbsp;·&nbsp; by Julian Engelkamp &amp; Jan Rockahr &nbsp;·&nbsp; © Red-Uhu Broadcast</div>
+  <div class="credits-right">
+    <span id="creditsEvents">—</span>
+    <span id="creditsStatus">·</span>
+    <span id="creditsIp">192.168.188.187</span>
+  </div>
+</div>
+
 </body>
 </html>
