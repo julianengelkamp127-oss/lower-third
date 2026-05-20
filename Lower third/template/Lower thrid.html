@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lower third</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <script src="./scripts/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Encode Sans Semi Expanded";
+        src: url("./media/EncodeSansSemiExpanded-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+      body {
+        background: transparent;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        text-rendering: optimizeLegibility;
+        z-index: 1;
+      }
+
+      #bar {
+        position: absolute;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.65),
+          rgba(180, 180, 180, 0.25)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        transform: perspective(1920px) rotateY(0deg) translateZ(0px);
+        transform-style: preserve-3d;
+        box-shadow:
+          0 12px 25px rgba(0, 0, 0, 0.35),
+          inset 3px 3px 6px rgba(255, 255, 255, 0.45),
+          inset -4px -4px 10px rgba(0, 0, 0, 0.25);
+        left: 5px;
+        right: 50%;
+        bottom: 5vh;
+        min-height: 75px;
+        height: auto;
+        padding: 10px 16px;
+        display: none;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        z-index: 2;
+      }
+
+      #prefix {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        z-index: 4;
+      }
+
+      #prefix img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      #textblock {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        flex: 1;
+      }
+
+      #f0 {
+        font-family: "Encode Sans Semi Expanded";
+        text-align: left;
+        color: #ff0000;
+        font-weight: 700;
+        font-size: 34px;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 3;
+      }
+
+      #f1 {
+        font-family: "Encode Sans Semi Expanded";
+        text-align: left;
+        color: #ff0000;
+        font-weight: 600;
+        font-size: 25px;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        position: relative;
+        z-index: 3;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="bar">
+      <div id="prefix" style="display:none;"><img id="projektLogo" src="" /></div>
+      <div id="textblock">
+        <div id="f0">Bandname</div>
+        <div id="f1"></div>
+      </div>
+    </div>
+    <script>
+      const prefix = document.getElementById("prefix");
+      const bar = document.getElementById("bar");
+      const f0 = document.getElementById("f0");
+      const f1 = document.getElementById("f1");
+
+      // ── OnTime Verbindung ──
+      // Liest den Namen aus OnTime: message.secondary → f0, message.timer.text → f1
+      const ONTIME_HOST = new URLSearchParams(location.search).get('host') || '192.168.188.187:4001';
+
+      async function ladeNameVonOnTime() {
+        try {
+          const res = await fetch('http://' + ONTIME_HOST + '/api/poll', { cache: 'no-store' });
+          if (!res.ok) return;
+          const json = await res.json();
+          const p = json.payload ?? json;
+          const msg = p.message ?? {};
+
+          // Secondary Message enthält: "NAME||GENRE/ROLLE"
+          const secondary = String(msg.secondary ?? '').trim();
+          if (secondary !== '') {
+            if (secondary.includes('||')) {
+              const parts = secondary.split('||');
+              f0.textContent = parts[0].trim(); // Name
+              f1.textContent = parts[1].trim(); // Genre oder Rolle
+            } else {
+              f0.textContent = secondary;        // Nur Name (altes Format)
+              f1.textContent = '';
+            }
+          }
+
+          console.log('[Lower thrid] f0=' + f0.textContent + ' | f1=' + f1.textContent);
+
+          // Projektlogo laden — nur anzeigen wenn wirklich vorhanden
+          try {
+            const projRes = await fetch('http://' + ONTIME_HOST + '/data/project', { cache: 'no-store' });
+            if (projRes.ok) {
+              const projData = await projRes.json();
+              const logoEl = document.getElementById('projektLogo');
+              const prefixEl = document.getElementById('prefix');
+              if (projData.logo) {
+                const logoUrl = 'http://' + ONTIME_HOST + '/user/logo/' + projData.logo;
+                // Erst testen ob Bild erreichbar
+                const imgTest = new Image();
+                imgTest.onload = () => {
+                  if (logoEl) logoEl.src = logoUrl;
+                  if (prefixEl) prefixEl.style.display = 'flex';
+                };
+                imgTest.onerror = () => {
+                  // Kein Bild erreichbar → prefix verstecken
+                  if (prefixEl) prefixEl.style.display = 'none';
+                };
+                imgTest.src = logoUrl;
+              } else {
+                // Kein Logo in OnTime → prefix verstecken
+                if (prefixEl) prefixEl.style.display = 'none';
+              }
+            }
+          } catch(_) {
+            const prefixEl = document.getElementById('prefix');
+            if (prefixEl) prefixEl.style.display = 'none';
+          }
+
+        } catch (err) {
+          console.warn('[Lower thrid] OnTime nicht erreichbar:', err);
+        }
+      }
+
+      function play() {
+        console.log("[Lower third] play");
+
+        // 1) Erst Daten laden (unsichtbar im Hintergrund)
+        ladeNameVonOnTime().then(() => {
+          // 2) Elemente sichtbar machen — aber noch außerhalb des Bildschirms (x:-960)
+          f0.style.display = "block";
+          f1.style.display = "block";
+          bar.style.display = "flex";
+          // prefix wird nur vom Logo-Loader eingeblendet, NICHT hier
+          // 3) Jetzt erst Animation starten — kein Flackern!
+          gsap.fromTo("#bar", { x: -960 }, {
+            x: 0,
+            duration: 1,
+            delay: 0.2,
+            ease: "power3.out"
+          });
+          gsap.fromTo("#prefix", { opacity: 0 }, {
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.8,
+            ease: "power3.in"
+          });
+          gsap.fromTo("#f0", { opacity: 0 }, {
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.8,
+            ease: "power3.in"
+          });
+          gsap.fromTo("#f1", { opacity: 0 }, {
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.8,
+            ease: "power3.in"
+          });
+        });
+      }
+
+      function update() {
+        console.log("[Lower third] update");
+        f0.style.display = "block";
+        f1.style.display = "block";
+        bar.style.display = "block";
+        // prefix nur vom Logo-Loader gesteuert
+      }
+
+      function stop() {
+        console.log("[Lower third] stop");
+        gsap.fromTo("#bar", { x:0 }, { 
+          x: -960, 
+          duration: 1, 
+          delay: 1.5, 
+          ease: "power3.out",
+          /* "power3.out", "expo.out" */
+
+        });
+        gsap.fromTo("#prefix", { opacity:1 }, { 
+          opacity: 0,
+          duration: 1, 
+          delay: 0, 
+          ease: "power3.in",
+        });
+        gsap.fromTo("#f0", { opacity: 1 }, { 
+          opacity: 0,
+          duration: 1, 
+          delay: 0, 
+          ease: "power3.in",
+        });
+        gsap.fromTo("#f1", { opacity: 1 }, { 
+          opacity: 0,
+          duration: 1, 
+          delay: 0, 
+          ease: "power3.in",
+        });
+      }
+
+      function next() {
+        console.log("[Lower third] next");
+      }
+
+      function remove() {
+        console.log("[Lower third] remove");
+        f0.style.display = "none";
+        f1.style.display = "none";
+        bar.style.display = "none";
+        prefix.style.display = "none";
+        gsap.killTweensOf(["#bar", "#prefix", "#f0", "#f1"]);
+      }
+      
+    </script>
+  </body>
+</html>
