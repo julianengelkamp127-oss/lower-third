@@ -981,7 +981,7 @@
     <div style="margin-top:auto;">
       <div class="summary-label">Server-Adresse</div>
       <div class="config-row">
-        <input class="config-input" id="serverInput" type="text" value="" placeholder="192.168.188.187:4001" onkeydown="if(event.key==='Enter')reconnect()" />
+        <input class="config-input" id="serverInput" type="text" value="" placeholder="10.20.20.5:4001" onkeydown="if(event.key==='Enter')reconnect()" />
         <button class="config-btn" onclick="reconnect()">↺ Verbinden</button>
       </div>
     </div>
@@ -994,7 +994,7 @@
 
 <script>
   // ── CONFIG ──
-  const FALLBACK_HOST = '192.168.188.187:4001';
+  const FALLBACK_HOST = '10.20.30.5:4001';
   const DEFAULT_HOST = localStorage.getItem('ontime_host') || FALLBACK_HOST;
   const LOWER_THIRD_STORAGE_KEY = 'ontime.lowerThird';
   let host = DEFAULT_HOST;
@@ -1813,7 +1813,7 @@ f1 (Rolle): "${person.role}"`;
   <div class="credits-right">
     <span id="creditsEvents">—</span>
     <span id="creditsStatus">·</span>
-    <span id="creditsIp">192.168.188.187</span>
+    <span id="creditsIp">10.20.30.5</span>
   </div>
 </div>
 
